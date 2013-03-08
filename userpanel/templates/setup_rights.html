@@ -1,0 +1,128 @@
+{include file="header.html"}
+<!--// $Id$ //-->
+<script language="JavaScript" type="text/javascript">
+<!--
+	function SelectAllCustomers()
+	{
+		if(document.setrights.customers.checked)
+			for (var i = 0; i < document.setrights.elements[0].length; i++)
+				document.setrights.elements[0].options[i].selected = true;
+		else
+			for (var i = 0; i < document.setrights.elements[0].length; i++)
+				document.setrights.elements[0].options[i].selected = false;
+	}
+//-->
+</script>
+<h1>{$layout.pagetitle}</h1>
+<table width="100%" cellpadding="3">
+	<tr>
+	<form name="setdefaultrights" method="POST" action="?m=userpanel&f=submit_rights_default">
+		<td width="1%" valign="top">
+			<table width="100%" cellpadding="3">
+				<tr class="dark">
+					<td class="fall" width="99%" colspan="3">
+						<img src="img/settings.gif" alt="">&nbsp;<strong>{trans("Default Userpanel Rights:")}</strong>
+					</td>
+				</tr>
+				<tr class="LIGHT">
+					<td class="flr" colspan="3" valign="top">
+						<table cellpadding="3" cellspacing="0" width="100%">
+							<tr class="dark">
+								<td width="1%" nowrap class="fleftu">{trans("Module:")}</td>
+								<td width="97%" nowrap class="fbt">{trans("Description:")}</td>
+								<td width="1%" class="frightu">&nbsp;</td>
+							</tr>
+							{cycle values="light,lucid" print=false}
+							{foreach from=$userpanelrights item=right}
+							<tr class="{cycle advance=false}" onmouseover="addClass(this, 'highlight')" onmouseout="removeClass(this, 'highlight')">
+								<td class="fleft" width="1%" nowrap>{$right.module}</td>
+								<td width="97%" nowrap><label for="setdefaultrights{$right.id}">{t}{$right.description}{/t}</label></td>
+								<td class="fright"><input class="box {cycle}" type="checkbox" name="setdefaultrights[{$right.id}]" id="setdefaultrights{$right.id}" value="{$right.id}"{if $right.setdefault} CHECKED{/if}></td>
+							</tr>
+							{foreachelse}
+							<tr>
+								<td class="flr" align="center" width="100%" colspan="3">
+								<p>&nbsp;</p>
+								<p><strong>{trans("There are any userpanel rights.")}</strong></p>
+								<p>&nbsp;</p>
+								</td>
+							</tr>
+							{/foreach}
+							<tr>
+								<td class="ftop" colspan="3"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr class="LIGHT">
+					<td class="fbottomu" align="RIGHT" colspan="3">
+						<a href="javascript:document.setdefaultrights.submit()" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></a>
+					</td>
+				<tr>
+			</table>
+		</td>
+	</FORM>
+	</tr>
+	<tr>
+	<FORM name="setrights" METHOD="POST" ACTION="?m=userpanel&f=submit_rights">
+		<td width="1%" valign="top">
+			<table width="100%" cellpadding="3">
+				<tr class="dark">
+					<td class="fleftu" width="1%">
+						<img src="img/{if $layout.lmsv.2 == 6}user{else}customer{/if}.gif" alt="">&nbsp;<strong>{trans("Customers:")}</strong>
+					</td>
+					<td class="frightu" width="99%" colspan="2">
+						<img src="img/settings.gif" alt="">&nbsp;<strong>{trans("Userpanel Rights:")}</strong>
+					</td>
+				</tr>
+				<tr class="LIGHT">
+					<td class="fleft">
+						<SELECT size="20" name="setrights[mcustomerid][]" multiple {tip text="Select customers"}>
+							{foreach from=$customerlist item=item}
+							<OPTION value="{$item.id}">{$item.customername|truncate:50:" ..."} ({$item.id|string_format:"%04d"})</OPTION>
+							{/foreach}
+						</SELECT>
+					</td>
+					<td class="fright" colspan="2" style="vertical-align: top;">
+						<table cellpadding="3" cellspacing="0" width="100%">
+							<tr class="dark">
+								<td width="1%" nowrap class="fleftu">{trans("Module:")}</td>
+								<td width="97%" nowrap class="fbt">{trans("Description:")}</td>
+								<td width="1%" class="frightu">&nbsp;</td>
+							</tr>
+							{cycle values="light,lucid" print=false}
+							{foreach from=$userpanelrights item=right}
+							<tr class="{cycle advance=false}" onmouseover="addClass(this, 'highlight')" onmouseout="removeClass(this, 'highlight')">
+								<td class="fleft" width="1%" nowrap>{$right.module}</td>
+								<td width="97%" nowrap><label for="setrightsrights{$right.id}">{t}{$right.description}{/t}</label></td>
+								<td class="fright"><input class="box {cycle}" type="checkbox" name="setrights[rights][{$right.id}]" id="setrightsrights{$right.id}" value="{$right.id}"></td>
+							</tr>
+							{foreachelse}
+							<tr>
+								<td class="flr" align="center" width="100%" colspan="3">
+								<p>&nbsp;</p>
+								<p><strong>{trans("There are any userpanel rights.")}</strong></p>
+								<p>&nbsp;</p>
+								</td>
+							</tr>
+							{/foreach}
+							<tr>
+								<td class="ftop" colspan="3"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr class="LIGHT">
+					<td class="fbl" width="1%">
+						<input type="checkbox" name="customers" class="box light" id="selectall" onchange="SelectAllCustomers()"></INPUT><label for="selectall">{trans("Select All")}</label>
+					</td>
+					<td class="fbr" align="RIGHT" colspan="2">
+						<a href="javascript:document.setrights.submit()" accesskey="s">{trans("Submit")} <img src="img/save.gif" alt=""></a>
+					</td>
+				<tr>
+			</table>
+		</td>
+	</FORM>
+	</tr>
+</table>
+{include file="footer.html"}

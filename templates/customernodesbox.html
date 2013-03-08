@@ -1,0 +1,178 @@
+<!--// $Id$ //-->
+<script type="text/javascript">
+<!--
+function setstatus(access)
+{
+	if(access)
+		document.custnodeslist.action = '?m=nodeset&access=1';
+	else
+		document.custnodeslist.action = '?m=nodeset';
+
+	document.custnodeslist.submit();
+}
+
+function setwarning(warning)
+{
+	if(warning)
+		document.custnodeslist.action = '?m=nodewarn&warning=1';
+	else
+		document.custnodeslist.action = '?m=nodewarn';
+
+	document.custnodeslist.submit();
+}
+
+function setgroup(act)
+{
+	document.custnodeslist.action = '?m=nodegroup&action=' + act + '&groupid=' + document.getElementById('groupselect').value;
+	document.custnodeslist.submit();
+}
+//-->
+</script>
+{$lastonline_limit=get_conf('phpui.lastonline_limit')}
+{if check_conf('phpui.ewx_support')}{assign var=ewx value=1}{else}{assign var=ewx value=0}{/if}
+<table width="100%" cellpadding="3">
+	<tr class="dark">
+		<td width="99%" class="fleftu hand" onclick="ShowOrHideBox('nodespanel_{$layout.module}');">
+			<img src="img/node.gif" alt="">
+			<b>{t a=$customernodes|@count|default:"0"}Customer Nodes ($a):{/t}</b>
+		</td>
+		<td width="1%" class="frightu" align="right" nowrap>
+			{if $customerinfo.status neq "1" and ! $customerinfo.deleted}<a href="?m=nodeadd&ownerid={$customerinfo.id}">{trans("New Node")} &raquo;</a>&nbsp;{/if}
+		</td>
+	</tr>
+        <tr id="nodespanel_{$layout.module}" style="display:none;">
+	        <td width="100%" colspan="2" class="fall">
+		    <form method="post" action="" name="custnodeslist">
+		    <table cellpadding="5" cellspacing="0" width="100%">
+		        <tr class="dark">
+	                <td width="{math equation="x-y" x=95 y=$ewx}%" class="fleftu"><b>{trans("Name:")}</b></td>
+			    <td width="1%" class="fbt" align="left" nowrap>Podłączony do:</td>
+		    	    <td width="1%" class="fbt" align="right">{trans("ID:")}</td>
+			    {if $ewx}
+		    	    <td width="1%" class="fbt" align="right">{trans("Channel:")}</td>
+			    {/if}
+		    	    <td width="1%" class="fbt" align="right">{trans("Address:")}</td>
+		    	    <td width="1%" class="fbt" align="right">{trans("MAC:")}</td>
+		    	    <td width="1%" class="fbt" align="right">{trans("Groups:")}</td>
+		    	    <td width="1%" class="fbt" align="right">{trans("Network:")}</td>
+		    	    <td width="1%" class="frightu">&nbsp;</td>
+			</tr>
+			{cycle values="light,lucid" print=false name=nodes}
+			{section name=customernodes loop=$customernodes}
+    			<tr class="{cycle name=nodes}{if ! $customernodes[customernodes].access} blend{/if}" onmouseover="addClass(this, 'highlight')" onmouseout="removeClass(this, 'highlight')">
+			    <td onclick="return self.location.href='?m=nodeinfo&id={$customernodes[customernodes].id}';">
+				{if $customernodes[customernodes].lastonline}
+				    {if ($smarty.now-$customernodes[customernodes].lastonline) > $lastonline_limit}
+					<img src="img/node_off.gif" alt="" {tip a=$customernodes[customernodes].lastonlinedate text="Last online: \$a"}>
+				    {else}
+				        <img src="img/node_on.gif" alt="" {tip a="on-line" text="Last online: \$a"}>
+				    {/if}
+				{else}
+				<img src="img/node_unk.gif" alt="">
+				{/if}
+				<b>{$customernodes[customernodes].name}</b>
+				{if $customernodes[customernodes].location}<BR>
+				<NOBR>{$customernodes[customernodes].location|truncate:60:"...":true}</NOBR>
+				{/if}
+				{if $customernodes[customernodes].info}<BR>
+				<NOBR>{$customernodes[customernodes].info|truncate:60:"...":true}</NOBR>
+				{/if}
+			    </td>
+			    
+			    <td width="1%" align="left" nowrap style="padding-right:10px;">
+				{if $customernodes[customernodes].netdev}
+				    <a href="?m=netdevinfo&id={$customernodes[customernodes].netdev}" {tip a={$customernodes[customernodes].netdev} dynpopup='?m=netdevinfoshort&id=$a' sticky=0}>
+				    {$customernodes[customernodes].devname}</a>{if $customernodes[customernodes].devlocation}<br>{$customernodes[customernodes].devlocation}{/if}
+				{else}
+				&nbsp;
+				{/if}
+			    </td>
+			    
+			    <td onclick="return self.location.href='?m=nodeinfo&id={$customernodes[customernodes].id}';" align="right">
+				({$customernodes[customernodes].id|string_format:"%04d"})
+			    </td>
+			    {if $ewx}
+		    	    <td onclick="return self.location.href='?m=nodeinfo&id={$customernodes[customernodes].id}';" align="right" NOWRAP>
+    				{if $customernodes[customernodes].channelname}
+	        	    <a href="?m=ewxchinfo&id={$customernodes[customernodes].channelid}">{$customernodes[customernodes].channelname|truncate:30:"...":true}</a>
+			    	{elseif $customernodes[customernodes].channelid}
+				        {if !$customernodes[customernodes].cid}
+    				    <a href="?m=ewxchinfo&id=0">[{trans("default")}]</a>
+	    			    {else}
+		    		    [{$customernodes[customernodes].channelid|string_format:"%04d"}]
+				        {/if}
+				    {/if}
+				    {if $customernodes[customernodes].downceil}({$customernodes[customernodes].downceil}/{$customernodes[customernodes].upceil|default:0} kbit/s){/if}
+			        </td>
+			    {/if}
+			    <td align="right" NOWRAP>
+				<a href="javascript:ping_popup('{$customernodes[customernodes].ip}')">{$customernodes[customernodes].ip}</a> {if $customernodes[customernodes].ip_pub != "0.0.0.0"} <a href="javascript:ping_popup('{$customernodes[customernodes].ip_pub}')">({$customernodes[customernodes].ip_pub})</a>{/if}
+			    </td>
+		    	    <td onclick="return self.location.href='?m=nodeinfo&id={$customernodes[customernodes].id}';">
+				{$customernodes[customernodes].mac|replace:",":"<BR>"}
+			    </td>
+			    <td align="right" NOWRAP>
+				{if $customernodes[customernodes].gcount}
+				<img src="img/nodegroup.gif" alt="" {tip a=$customernodes[customernodes].id dynpopup='?m=nodeinfo&id=$a&nodegroups=1' sticky=1}>
+				{/if}
+			    </td>
+			    <td align="right" NOWRAP>
+				<b><a href="?m=netinfo&id={$customernodes[customernodes].network.id}">{$customernodes[customernodes].network.name|truncate:"20":"...":true}</a></b> {if $customernodes[customernodes].network_pub} (<b><a href="?m=netinfo&id={$customernodes[customernodes].network_pub.id}">{$customernodes[customernodes].network_pub.name|truncate:"20":"...":true}</a></b>){/if}
+			    </td>
+			    <td NOWRAP align="right">
+				
+				{if $customernodes[customernodes].monitoring}
+					<img src="img/radar.png" style="cursor:pointer;" {tip text="Kliknij aby otworzyć szczegółowe statystyki"} onclick="monitchart_popup('{$customernodes[customernodes].id}','node');">
+				{/if}
+				
+				{if get_conf('monit.live_ping')}<img src="img/ping.gif" {tip text="Pinguj urzadzenie"} style="cursor:pointer;" onclick="window.open('?m=nodeping&packetsize=64&ip={$customernodes[customernodes].ip}','pingnode{$customernodes[customernodes].ip}','width=400,height=450')">{/if}
+				<a href="?m=nodeset&id={$customernodes[customernodes].id}"><img src="img/{if ! $customernodes[customernodes].access}no{/if}access.gif" alt="[ {if ! $customernodes[customernodes].access}{trans("Connect")}{else}{trans("Disconnect")}{/if} ]" title="[ {if ! $customernodes[customernodes].access}{trans("Connect")}{else}{trans("Disconnect")}{/if} ]"></a>
+				<a href="?m=nodewarn&id={$customernodes[customernodes].id}"><img src="img/warning{if ! $customernodes[customernodes].warning}off{else}on{/if}.gif" alt="[ {if ! $customernodes[customernodes].warning}{trans("Enable notice")}{else}{trans("Disable notice")}{/if} ]" title="[ {if ! $customernodes[customernodes].warning}{trans("Enable notice")}{else}{trans("Disable notice")}{/if} ]"></a>
+				<a href="?m=nodedel&id={$customernodes[customernodes].id}" onclick="return confirmLink(this, '{t a=$customernodes[customernodes].name}Are you sure, you want to remove node \'$a\' from database?{/t}')"><img src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></a>
+				<a href="?m=nodeedit&id={$customernodes[customernodes].id}"><img src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></a>
+				<a href="?m=nodeinfo&id={$customernodes[customernodes].id}"><img src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></a>&nbsp;
+				<input type="checkbox" name="marks[{$customernodes[customernodes].id}]" value="{$customernodes[customernodes].id}" CHECKED>
+			    </td>
+			</tr>
+			{sectionelse}
+			<tr>
+			    <td width="100%" colspan="{math equation="x+y" x=7 y=$ewx}" align="center">
+				<p>&nbsp;</p>
+				<p><b>{if $customerinfo.deleted}<font class="red">{trans("That customer has been deleted.")}</font>{else}{trans("That customer hasn't got any node.")}{/if}</b></p>
+				<p>&nbsp;</p>
+			    </td>
+			</tr>
+			{/section}
+			<tr class="light">
+			    <td colspan="{math equation="x+y" x=5 y=$ewx}" class="ftop">
+				<img src="img/access.gif">
+				<a href="javascript: setstatus(1)"> {trans("Connect")}</a>/<a href="javascript: setstatus(0)">{trans("Disconnect")}</a>
+				<img src="img/warningon.gif">
+				<a href="javascript: setwarning(1)"> {trans("Enable")}</a>/<a href="javascript: setwarning(0)">{trans("Disable")}</a>
+				{if $allnodegroups}
+				<img src="img/nodegroup.gif">
+				<a href="javascript: setgroup('setgroup')"> {trans("Add")}</a>/<a href="javascript: setgroup('unsetgroup')">{trans("Remove Group")}</a>:
+				<select size="1" id="groupselect">
+	            		    {foreach from=$allnodegroups item=nodegroup}
+			            <option value="{$nodegroup.id}" {if $listdata.nodegroup eq $nodegroup.id} SELECTED {/if}>{$nodegroup.name|truncate:30:"...":true}</option>
+				    {/foreach}
+				</select>
+				{/if}
+			    </td>
+			    <td class="ftop" align="right" colspan="3">
+			        <nobr><label for="allbox">{trans("Check All")}</label><input type="checkbox" name="allbox" id="allbox" onchange="CheckAll('custnodeslist', this)" value="1" CHECKED></nobr>
+                </td>
+			</tr>
+		    </table>
+		    </form>
+		</td>
+	</tr>
+</table>
+{assign var='modul' value=$layout.module}
+{if get_profile("nodespanel_$modul")}
+<script type="text/javascript">
+<!--
+	document.getElementById('nodespanel_{$layout.module}').style.display = '';
+//-->
+</script>
+{/if}

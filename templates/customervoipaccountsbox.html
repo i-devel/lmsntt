@@ -1,0 +1,61 @@
+<!--// $Id$ //-->
+<table width="100%" cellpadding="3">
+	<tr class="dark hand">
+		<td width="99%" class="fleftu hand" onclick="ShowOrHideBox('voipaccountspanelbox');">
+			<img src="img/voip.gif" alt="">
+			<b>{t a=$customervoipaccounts.total|default:"0"}Voip Accounts ($a):{/t}</b> 
+		</td>
+		<td width="1%" class="frightu" align="right" nowrap>
+			{if $customerinfo.status neq "1" and ! $customerinfo.deleted}<a href="?m=voipaccountadd&ownerid={$customerinfo.id}">{trans("New Voip Account")} &raquo;</a>&nbsp;{/if}
+		</td>
+	</tr>
+	<tr id="voipaccountspanelbox" style="display:none;">
+		<td width="100%" colspan="2" class="fall">
+			<table cellpadding="5" cellspacing="0" width="100%">
+				<tr class="dark">
+					<td width="96%" nowrap class="fleftu"><b>{trans("Login:")}</b></td>
+					<td width="1%" nowrap class="fbt">{trans("ID:")}</td>
+					<td width="1%" nowrap class="fbt" colspan="2">{trans("Password:")}</td>
+					<td width="1%" nowrap class="fbt">{trans("Phone number:")}</td>
+					<td width="1%" class="frightu">&nbsp;</td>
+				</tr>
+				{cycle name=voips values="light,lucid" print=false}
+				{foreach from=$customervoipaccounts.accounts item=voipaccount}
+				<tr class="{cycle name=voips}" onmouseover="addClass(this, 'highlight')" onmouseout="removeClass(this, 'highlight')">
+					<td width="96%" nowrap onclick="return self.location.href='?m=voipaccountinfo&id={$voipaccount.id}'">
+					    <b>{$voipaccount.login}</b>
+					</td>
+					<td width="1%" nowrap onclick="return self.location.href='?m=voipaccountinfo&id={$voipaccount.id}'">
+					    ({$voipaccount.id|string_format:"%04d"})
+					</td>
+					<td width="1%" nowrap colspan="2" onclick="return self.location.href='?m=voipaccountinfo&id={$voipaccount.id}'">
+					    {$voipaccount.passwd}
+					</td>
+					<td width="1%" nowrap onclick="return self.location.href='?m=voipaccountinfo&id={$voipaccount.id}'">
+					    {$voipaccount.phone}</td>
+					<td width="1%" align="right" nowrap>
+						<a onclick="return confirmLink(this, '{trans("Are you sure, you want to remove customer voip account?")}')" href="?m=voipaccountdel&id={$voipaccount.id}"><img src="img/delete.gif" alt="[ {trans("Delete")} ]" title="[ {trans("Delete")} ]"></a>
+						<a href="?m=voipaccountedit&id={$voipaccount.id}"><img src="img/edit.gif" alt="[ {trans("Edit")} ]" title="[ {trans("Edit")} ]"></a>
+						<a href="?m=voipaccountinfo&id={$voipaccount.id}"><img src="img/info.gif" alt="[ {trans("Info")} ]" title="[ {trans("Info")} ]"></a>
+					</td>
+				</tr>
+				{foreachelse}
+				<tr>
+					<td align="center" width="100%" colspan="6">
+						<p>&nbsp;</p>
+						<p><b>{trans("That customer does not own any voip account.")}</b></p>
+						<p>&nbsp;</p>
+					</td>
+				</tr>
+				{/foreach}
+			</table>
+		</td>
+	</tr>
+</table>
+{if get_profile('voipaccountspanelbox')}
+<script type="text/javascript">
+<!--
+	document.getElementById('voipaccountspanelbox').style.display = '';
+//-->
+</script>
+{/if}

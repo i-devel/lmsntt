@@ -1,0 +1,39 @@
+<table class="table table-bordered table-striped">
+    <tr class="info"><td colspan="4"><strong>Przypisane urządzenia:</strong></td></tr>
+
+
+        <tr class="warning">
+            <td><strong>Opis urządzenia:</strong></td>
+            <td><strong>MAC adres:</strong></td>
+            <td><strong>Lokalne IP:</strong></td>
+            <td><strong>Publiczne IP:</strong></td>
+        </tr>
+
+{section name=usernodes loop=$usernodes}
+{if $usernodes[usernodes].id}
+    <tr>
+        <td><strong>
+            {if $usernodes[usernodes].access}
+                <span class="positive">{$usernodes[usernodes].name}</span>
+            {else}
+                <span class="negative">{$usernodes[usernodes].name}</span>
+            {/if}</strong>
+        </td>
+        <td>
+    	    {$usernodes[usernodes].mac|replace:",":"<br/>"}
+    	</td>
+        
+        <td>
+	    {if $rights.info.ping_node}<span onclick="window.open('?m=info&f=nodeping&packetsize=64&ip={$usernodes[usernodes].ip}','pingnode{$usernodes[usernodes].ip}','width=400,height=500')">{img src="ping.gif" style="cursor:pointer;"}</span>&nbsp;&nbsp;{/if}{$usernodes[usernodes].ip}
+    	</td>
+        
+        <td>
+    	    {if $usernodes[usernodes].ip_pub!="0.0.0.0"}<span onclick="window.open('?m=info&f=nodeping&packetsize=64&ip={$usernodes[usernodes].ip_pub}','pingnode{$usernodes[usernodes].ip_pub}','width=450,height=500')">{img src="ping.gif" style="cursor:pointer;"}</span>{$usernodes[usernodes].ip_pub}{/if}
+	</td>
+    </tr>
+{/if}
+{sectionelse}
+    <tr><td colspan="4">{trans("You don't have any computers.")}</td></tr>
+{/section}
+{if $usernodes && $rights.info.print_traffic && $statyears}{include file="module:usertrafficbox.html"}{/if}
+</table>

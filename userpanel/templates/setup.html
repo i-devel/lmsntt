@@ -1,0 +1,122 @@
+{include file="header.html"}
+
+<h1>{$layout.pagetitle}</h1>
+<form name="config" method="POST" action="?m=userpanel&f=submit_setup">
+<table cellpadding="3" width="100%">
+    <tr class="dark">
+	<td class="fall" colspan="2">
+	    <b>{trans("Basic Configuration:")}</b>
+	</td>
+    </tr>
+    <tr class="light">
+	<td class="fleft pad" width="1%" nowrap>
+	    <label for="boxin1"><b>URL Logo</b></label>
+	</td>
+	<td class="fright" width="99%">
+	    <input type="text" name="logourl" style="width:500px;" value="{$logourl}">
+	    {if $logourl}<br><img src="{$logourl}">{/if}
+	</td>
+    </tr>
+
+    <tr class="light">
+	<td class="fleft pad" width="1%" nowrap align="center">
+	    <label for="boxin1"><b>Okno logowania<br>Box nr. 1</b></label>
+	</td>
+	<td class="fright" width="99%">
+	    <p><textarea name="boxinfo1" id="boxin1">{$boxinfo1}</textarea></p>
+	</td>
+    </tr>
+
+    <tr class="light">
+	<td class="fleft pad" width="1%" nowrap align="center">
+	    <label for="boxin2"><b>Okno logowania<br>Box nr. 2</b></label>
+	</td>
+	<td class="fright" width="99%">
+	    <textarea name="boxinfo2" id="boxin2">{$boxinfo2}</textarea>
+	</td>
+    </tr>
+
+    <tr class="light">
+	<td class="fleft pad" width="1%" nowrap align="center">
+	    <label for="boxin3"><b>Okno logowania<br>Box nr. 3</b></label>
+	</td>
+	<td class="fright" width="99%">
+	    <textarea name="boxinfo3" id="boxin3">{$boxinfo3}</textarea>
+	</td>
+    </tr>
+
+    <tr class="light">
+	<td class="fleft pad" width="1%" nowrap align="center">
+	    <label for="boxin4"><b>Moduł Informacje<br>Box pod menu</b></label>
+	</td>
+	<td class="fright" width="99%">
+	    <textarea name="boxinfo4" id="boxin4">{$boxinfo4}</textarea>
+	</td>
+    </tr>
+    <tr class="light">
+	<td class="fbottomu" align="right" colspan="2">
+	    <a href="javascript:document.config.submit();" ACCESSKEY="S">{trans("Submit")} <IMG SRC="img/save.gif" ALT=""></A>
+	</td>
+    </tr>
+</table>
+
+{literal}
+<script type="text/javascript">
+<!--
+    $(document).ready(function() {
+	$("#boxin1").cleditor({width:450, height:250, fonts:'Tahoma', useCSS:true})[0].focus();
+	$("#boxin2").cleditor({width:450, height:250, fonts:'Tahoma', useCSS:true});
+	$("#boxin3").cleditor({width:450, height:250, fonts:'Tahoma', useCSS:true});
+	$("#boxin4").cleditor({width:450, height:250, fonts:'Tahoma', useCSS:true});
+    });
+//-->
+</script>
+{/literal}
+
+
+<br>
+<table cellpadding="3" width="100%">
+    <tr class="dark">
+	<td class="fleftu" align="center"><b>{trans("Module")}</b></td>
+	<td class="fbt" align="center"><b>{trans("Display name")}</b></td>
+	<td class="fbt" align="center"><b>{trans("Prio")}</b></td>
+	<td class="fbt" align="center"><b>{trans("Database version")}</b></td>
+	<td class="fbt" align="center"><b>{trans("Tip")}</b></td>
+	<td class="fbt" align="center"><b>{trans("Description")}</b></td>
+	<td class="frightu" width="1%" nowrap></td>
+    </tr>
+    {cycle values="light,lucid" print=false}
+    {foreach from=$menu item=menuitem}
+    <tr class="{cycle} {if in_array($menuitem.module,$disable_modules)}blend{/if}" onmouseover="addClass(this, 'highlight')" onmouseout="removeClass(this, 'highlight')">
+	<td class="fleft">
+	    {$menuitem.module}
+	</td>
+	<td>
+	    {$menuitem.name}
+	</td>
+	<td align="center">
+	    {$menuitem.prio}
+	</td>
+	<td align="center">
+	    {if $menuitem.dbver>0}{$menuitem.dbver}{else}{trans("-")}{/if}
+	</td>
+	<td>
+	    {t}{$menuitem.tip}{/t}
+	</td>
+	<td>
+	    {t}{$menuitem.description}{/t}
+	</td>
+	<td class="fright" align="right" width="1%" nowrap>
+	    <img src="img/{if in_array($menuitem.module,$disable_modules)}no{/if}access.gif" onclick="return self.location.href='?m=userpanel&f=setactive&actmod={$menuitem.module}&act={if !in_array($menuitem.module,$disable_modules)}0{else}1{/if}';"  style="border:0;cursor:pointer;" title="[ {trans('On / Off')} ]">
+	    <img src="img/edit.gif" onclick="return self.location.href='?m=userpanel&module={$menuitem.module}';" style="border:0;cursor:pointer;" title="[ {trans('Edit')} ]">
+	</td>
+    </tr>
+    {/foreach}
+    <tr class="light">
+	<td width="98%" colspan="7" class="fall" align="right">
+	    <b>{trans("Total:")} {$total}</b>
+	</td>
+    </tr>
+</table>
+</form>
+{include file="footer.html"}

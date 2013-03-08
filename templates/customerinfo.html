@@ -1,0 +1,94 @@
+{include file="header.html"}
+<!--// $Id$ //-->
+<h1>{$layout.pagetitle}</h1>
+{include file="calendar_js.html"}
+<table width="100%" cellpadding="3">
+	<tr>
+		<td width="100%">
+			{include file="customerinfobox.html"}
+		</td>
+	</tr>
+	{if !get_conf('privileges.hide_callcenter')}
+	<tr>
+		<td width="100%">
+			{include file="customerinfocenterbox.html"}
+		</td>
+	</tr>
+	{/if}
+	{if check_modules(60)}
+	<tr>
+		<td width="100%">
+			{include file="customernodesbox.html"}
+		</td>
+	</tr>
+	{/if}
+	{if check_modules(110)}
+	<tr>
+		<td width="100%">
+			{include file="customermonit.html"}
+		</td>
+	</tr>
+	{/if}
+	
+	{if check_modules(80)}
+	<tr>
+		<td width="100%">
+			{include file="customervoipaccountsbox.html"}
+		</td>
+	</tr>
+	{/if}
+	{if check_modules(81)}
+	<tr>
+		<td width="100%">
+			{include file="hv_accountinfobox2.html"}
+		</td>
+	</tr>
+	{/if}
+	{if check_modules(180)}
+	<tr>
+		<td width="100%">
+			{include file="customerdocuments.html" limit=10}
+		</td>
+	</tr>
+	{/if}
+	{if check_modules(220)}
+	<tr>
+		<td width="100%">
+			{include file="customermessages.html" limit=10}
+		</td>
+	</tr>
+	{/if}
+	{if check_modules(300)}
+	<tr>
+		<td width="100%">
+			{include file="customerevents.html" limit=10}
+		</td>
+	</tr>
+	{/if}
+	<tr>
+		<td width="100%">
+			{include file="customergroups.html"}
+		</td>
+	</tr>
+	<tr>
+		<td width="100%">
+			{include file="customerassignments.html"}
+		</td>
+	</tr>
+	
+	{if check_modules(160)}
+	{if !check_conf('privileges.hide_finances')}
+	<tr>
+		<td width="100%">
+			{include file="customerbalancebox.html" limit=-10}
+		</td>
+	</tr>
+	{/if}
+	{/if}
+	<tr>
+		<td width="100%">
+			{include file="customeractions.html"}
+		</td>
+	</tr>
+</table>
+{include file="footer.html"}

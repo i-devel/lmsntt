@@ -1,0 +1,73 @@
+<!--// $Id$ //-->
+<table cellpadding="3" width="100%">
+	<tr class="dark">
+		<td class="fleftu hand" onclick="ShowOrHideBox('messagespanelbox');">
+                        <img src="img/mailsms.gif" alt="">
+                        <b>{trans("Customer Messages:")}</b>
+			{if $limit}
+                                ({t a=$limit}last $a messages{/t})
+                        {/if}
+                </td>
+                <td class="frightu" align="right" nowrap>
+			<a href="?m=messageadd&customerid={$customerinfo.id}">{trans("New Message")} &raquo;</a>
+			<a href="?m=messagelist&cid={$customerinfo.id}">{trans("All Messages")} &raquo;</a>&nbsp;
+                </td>
+        </tr>
+	<tr id="messagespanelbox"  style="display:none;">
+		<td width="100%" colspan="2" class="fall">
+			<table cellpadding="5" cellspacing="0" width="100%">
+				<tr CLASS="DARK">
+					<td width="1%" class="fleftu" nowrap>
+						{trans("Date:")}
+					</td>
+					<td width="97%" class="fbt" nowrap>
+						<B>{trans("Subject:")}</B>
+					</td>
+					<td width="1%" class="fbt" nowrap>
+						{trans("Destination:")}
+					</td>
+					<td width="1%" class="frightu" nowrap></td>
+				</tr>
+				{cycle values="light,lucid" print=false name=messages}
+				{foreach from=$messagelist item=item}
+				<tr class="{cycle name=messages}{if $item.status==$smarty.const.MSG_ERROR} alert{elseif $item.status==$smarty.const.MSG_SENT} blend{/if}" onmouseover="addClass(this, 'highlight')" onmouseout="removeClass(this, 'highlight')">
+					<td width="1%" nowrap onclick="return self.location.href='?m=messageinfo&id={$item.id}'">
+						{$item.cdate|date_format:"%Y/%m/%d"}
+					</td>
+					<td width="97%" onclick="return self.location.href='?m=messageinfo&id={$item.id}'">
+						<img src="img/{if $item.type == $smarty.const.MSG_SMS}sms{elseif $item.type==$smarty.const.MSG_MAIL}mail{elseif $item.type==$smarty.const.MSG_GADUGADU}gg{elseif $item.type==$smarty.const.MSG_USERPANEL}cms{/if}.gif" alt="">
+						<B>{$item.subject}</B>
+						{if $item.type == $smarty.const.MSG_USERPANEL}
+						<br><img src="img/empty.gif" width="16" border="0" alt="">
+						Pierwszy odczyt: {if $item.firstread}{$item.firstread|date_format:"Y/m/d H:i"}{else}-----{/if}&nbsp;&nbsp;&nbsp;
+						Ostatni odczyt: {if $item.lastread}{$item.lastread|date_format:"Y/m/d H:i"}{else}-----{/if}&nbsp;&nbsp;&nbsp;
+						Potwierdzone:  {if $item.isread}TAK{else}NIE{/if}
+						{/if}
+					</td>
+					<td width="1%" nowrap align="right" onclick="return self.location.href='?m=messageinfo&id={$item.id}'">
+						{if $item.type == $smarty.const.MSG_GADUGADU}GG:{/if}
+						{if $item.type != $smarty.const.MSG_USERPANEL}{$item.destination}{else}userpanel{/if}
+					</td>
+					<td width="1%" align="right" nowrap>
+					</td>
+				</tr>
+				{foreachelse}
+				<tr>
+					<td colspan="4" align="center">
+						<p>&nbsp;</p>
+						<p><b>{trans("There are no messages in database.")}</b></p>
+						<p>&nbsp;</p>
+					</td>
+				</tr>
+				{/foreach}
+			</table>
+		</td>
+	</tr>
+</table>
+{if get_profile('messagespanelbox')}
+<script type="text/javascript">
+<!--
+	document.getElementById('messagespanelbox').style.display = '';
+//-->
+</script>
+{/if}
